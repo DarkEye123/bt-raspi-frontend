@@ -2,7 +2,7 @@
 	"name": "supabase-shopify-svelte",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev -p 4000",
 		"build": "svelte-kit build",
 		"deploy-fe": "ln -f -s $(pwd)/build ../bt-raspi-backend && ln -f -s $(pwd)/node_modules ../bt-raspi-backend/build",
 		"deploy": "yarn build && yarn deploy-fe",
