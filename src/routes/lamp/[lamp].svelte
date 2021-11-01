@@ -6,6 +6,10 @@
 	import ErrorComponent from '$lib/Error.svelte';
 	import Switch from '$lib/Switch.svelte';
 	import customFetch from '$lib/customFetch';
+
+	const isBigScreen = typeof window !== 'undefined' && window.matchMedia('(min-width: 500px)');
+	const switchSize = isBigScreen.matches ? 'medium' : 'small';
+
 	let lampData = null;
 
 	function toggleLight() {
@@ -62,6 +66,7 @@
 						toggleAllSensors(lampData.sensor_blocker);
 					}}
 					bind:checked={lampData.sensor_blocker}
+					size={switchSize}
 				/>
 			</div>
 
@@ -76,6 +81,7 @@
 					}}
 					bind:checked={lampData.motion}
 					disabled={lampData.sensor_blocker}
+					size={switchSize}
 				/>
 			</div>
 
@@ -90,6 +96,7 @@
 					}}
 					bind:checked={lampData.sound}
 					disabled={lampData.sensor_blocker}
+					size={switchSize}
 				/>
 			</div>
 		</div>
@@ -105,9 +112,8 @@
 	}
 	.grid {
 		display: grid;
-		font-size: 1.5rem;
 		grid-template-columns: 1fr 1fr;
-		row-gap: 0.3rem;
+		row-gap: 0.8rem;
 	}
 	.left-col {
 		display: flex;
@@ -121,5 +127,10 @@
 	}
 	.value__positive {
 		color: lightgreen;
+	}
+	@media screen and (min-width: 500px) {
+		.grid {
+			row-gap: 1rem;
+		}
 	}
 </style>
