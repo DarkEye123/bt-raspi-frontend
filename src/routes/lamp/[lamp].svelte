@@ -1,31 +1,120 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
+	import OptionWrapper from '$lib/OptionWrapper.svelte';
+	import ErrorComponent from '$lib/Error.svelte';
+	import Switch from '$lib/Switch.svelte';
 	import customFetch from '$lib/customFetch';
-	import Icon from '$lib/Icon.svelte';
+	let lampData = null;
 
 	function toggleLight() {
 		customFetch(`/api/lamp/${$page.params.lamp}/toggle-light`);
 	}
 
-	import { goto } from '$app/navigation';
-	import OptionWrapper from '$lib/OptionWrapper.svelte';
+	function toggleAllSensors(currentValue) {
+		customFetch(
+			`/api/lamp/${$page.params.lamp}/${currentValue ? 'disable' : 'enable'}-all-sensors`
+		);
+	}
+
+	function toggleSensor(sensorName, currentValue) {
+		customFetch(
+			`/api/lamp/${$page.params.lamp}/${currentValue ? 'disable' : 'enable'}-${sensorName}-sensor`
+		);
+	}
+
+	async function synchronize() {
+		let data = await customFetch(`/api/lamp/${$page.params.lamp}/synchronize`);
+		if (!data.ok) {
+			throw new Error(data.statusText);
+		}
+		lampData = await data.json();
+	}
 </script>
 
 <svelte:head>
 	<title>Lamp Controller</title>
 </svelte:head>
 
-<!-- check for inspiration n.6 https://1stwebdesigner.com/free-code-snippets-css-buttons/ -->
+{#await synchronize()}
+	<p>Loading</p>
+{:then}
+	<OptionWrapper title="{$page.params.lamp} lamp" onBack={() => goto('/')}>
+		<div class="grid">
+			<span class="left-col">
+				Lamp Light:
+				<span class="value" class:value__positive={lampData.state}>&nbsp;{lampData.state}</span>
+			</span>
+			<button on:click={toggleLight} transition:fade>➔ Toggle Light</button>
+			<hr />
+			<hr />
 
-<OptionWrapper>
-	<span class="title">{$page.params.lamp} lamp</span>
-	<button on:click={toggleLight} transition:fade>Toggle Light</button>
-	<button on:click={toggleLight} transition:fade>Toggle Light</button>
-	<button on:click={toggleLight} transition:fade>Toggle Light</button>
-	<Icon name="back" focusable class="icon" on:click={() => goto('/')} />
-</OptionWrapper>
+			<span class="left-col">
+				Ignore All Sensors:
+				<span class="value" class:value__positive={lampData.sensor_blocker}
+					>&nbsp;{lampData.sensor_blocker}</span
+				>
+			</span>
+			<div style="display: flex; width: 100%; justify-content: center;">
+				<Switch
+					on:change={() => {
+						toggleAllSensors(lampData.sensor_blocker);
+					}}
+					bind:checked={lampData.sensor_blocker}
+				/>
+			</div>
+
+			<span class="left-col">
+				Motion Sensor:
+				<span class="value" class:value__positive={lampData.motion}>&nbsp;{lampData.motion}</span>
+			</span>
+			<div style="display: flex; width: 100%; justify-content: center;">
+				<Switch
+					on:change={() => {
+						toggleSensor('motion', lampData.motion);
+					}}
+					bind:checked={lampData.motion}
+				/>
+			</div>
+
+			<span class="left-col">
+				Sound Sensor:
+				<span class="value" class:value__positive={lampData.sound}>&nbsp;{lampData.sound}</span>
+			</span>
+			<div style="display: flex; width: 100%; justify-content: center;">
+				<Switch
+					on:change={() => {
+						toggleSensor('sound', lampData.sound);
+					}}
+					bind:checked={lampData.sound}
+				/>
+			</div>
+		</div>
+	</OptionWrapper>
+{:catch e}
+	<ErrorComponent title="Can't synchronize" on:click={() => goto('/')}>{e.message}</ErrorComponent>
+{/await}
 
 <style>
+	.grid {
+		display: grid;
+		font-size: 1.5rem;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 0.3rem;
+	}
+	.left-col {
+		display: flex;
+		align-items: center;
+	}
+	.value {
+		color: lightcoral;
+	}
+	hr {
+		width: 100%;
+	}
+	.value__positive {
+		color: lightgreen;
+	}
 </style>
