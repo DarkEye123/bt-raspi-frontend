@@ -1,13 +1,17 @@
 <script>
 	export let checked = false;
+	export let disabled = false;
 </script>
 
-<label class="switch">
-	<input type="checkbox" on:change bind:checked />
+<label class="switch" class:disabled>
+	<input type="checkbox" on:change bind:checked {disabled} />
 	<span class="slider round" />
 </label>
 
 <style>
+	.disabled .slider {
+		cursor: default;
+	}
 	.switch {
 		position: relative;
 		display: inline-block;

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 
 	import OptionWrapper from '$lib/OptionWrapper.svelte';
@@ -47,7 +46,7 @@
 				Lamp Light:
 				<span class="value" class:value__positive={lampData.state}>&nbsp;{lampData.state}</span>
 			</span>
-			<button on:click={toggleLight} transition:fade>➔ Toggle Light</button>
+			<button on:click={toggleLight}>➔ Toggle Light</button>
 			<hr />
 			<hr />
 
@@ -66,7 +65,7 @@
 				/>
 			</div>
 
-			<span class="left-col">
+			<span class="left-col" class:disabled={lampData.sensor_blocker}>
 				Motion Sensor:
 				<span class="value" class:value__positive={lampData.motion}>&nbsp;{lampData.motion}</span>
 			</span>
@@ -76,10 +75,11 @@
 						toggleSensor('motion', lampData.motion);
 					}}
 					bind:checked={lampData.motion}
+					disabled={lampData.sensor_blocker}
 				/>
 			</div>
 
-			<span class="left-col">
+			<span class="left-col" class:disabled={lampData.sensor_blocker}>
 				Sound Sensor:
 				<span class="value" class:value__positive={lampData.sound}>&nbsp;{lampData.sound}</span>
 			</span>
@@ -89,6 +89,7 @@
 						toggleSensor('sound', lampData.sound);
 					}}
 					bind:checked={lampData.sound}
+					disabled={lampData.sensor_blocker}
 				/>
 			</div>
 		</div>
@@ -98,6 +99,10 @@
 {/await}
 
 <style>
+	.disabled {
+		background-color: lightgray;
+		text-decoration: line-through;
+	}
 	.grid {
 		display: grid;
 		font-size: 1.5rem;

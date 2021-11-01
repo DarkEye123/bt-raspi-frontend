@@ -1,11 +1,10 @@
 <script>
-	import { fade } from 'svelte/transition';
 	import Icon from './Icon.svelte';
 	export let title = '';
 	export let onBack = null;
 </script>
 
-<div class="wrapper" transition:fade>
+<div class="wrapper">
 	<span class="title">{title}</span>
 	<slot />
 	{#if onBack}

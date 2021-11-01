@@ -10,7 +10,6 @@
 
 <!-- check for inspiration n.6 https://1stwebdesigner.com/free-code-snippets-css-buttons/ -->
 
-<!-- <OptionWrapper transition:fade> -->
 <OptionWrapper title="Choose a lamp">
 	<ul>
 		{#each lamps as lamp}
