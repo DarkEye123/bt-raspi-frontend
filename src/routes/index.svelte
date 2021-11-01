@@ -1,4 +1,6 @@
 <script>
+	import OptionWrapper from '$lib/OptionWrapper.svelte';
+
 	import { fade } from 'svelte/transition';
 
 	const lamps = ['bedroom', 'proto', 'mock'];
@@ -10,11 +12,12 @@
 
 <!-- check for inspiration n.6 https://1stwebdesigner.com/free-code-snippets-css-buttons/ -->
 
-<div transition:fade>
+<!-- <OptionWrapper transition:fade> -->
+<OptionWrapper>
 	{#each lamps as lamp}
 		<a sveltekit:prefetch href="/lamp/{lamp}">{lamp}</a>
 	{/each}
-</div>
+</OptionWrapper>
 
 <style>
 	div {
