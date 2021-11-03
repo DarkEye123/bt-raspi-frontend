@@ -1,19 +1,28 @@
 <script lang="ts">
+	interface Lamp {
+		state: boolean;
+		sensor_blocker: boolean;
+		motion: boolean;
+		sound: boolean;
+	}
+
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/env';
 
 	import OptionWrapper from '$lib/OptionWrapper.svelte';
 	import ErrorComponent from '$lib/Error.svelte';
 	import Switch from '$lib/Switch.svelte';
 	import customFetch from '$lib/customFetch';
 
-	const isBigScreen = typeof window !== 'undefined' && window.matchMedia('(min-width: 500px)');
+	const isBigScreen = browser && window.matchMedia('(min-width: 500px)');
 	const switchSize = isBigScreen.matches ? 'medium' : 'small';
 
-	let lampData = null;
+	let lampData: Lamp = null;
 
 	function toggleLight() {
 		customFetch(`/api/lamp/${$page.params.lamp}/toggle-light`);
+		lampData.state = !lampData.state;
 	}
 
 	function toggleAllSensors(currentValue) {

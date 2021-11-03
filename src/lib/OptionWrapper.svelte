@@ -1,8 +1,10 @@
 <script>
+	import { browser } from '$app/env';
 	import Icon from './Icon.svelte';
+
 	export let title = '';
 	export let onBack = null;
-	const isBigScreen = window.matchMedia('(min-width: 500px)');
+	const isBigScreen = browser && window.matchMedia('(min-width: 500px)');
 </script>
 
 <div class="wrapper">
