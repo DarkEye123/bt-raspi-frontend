@@ -1,7 +1,16 @@
 <script>
+	import customFetch from '$lib/customFetch';
 	import OptionWrapper from '$lib/OptionWrapper.svelte';
+	import Button from '$lib/Button.svelte';
 
 	const lamps = ['bedroom', 'proto', 'mock'];
+
+	let loading = false;
+	async function handleResetRequest() {
+		loading = true;
+		await customFetch('/api/reconnect-all');
+		loading = false;
+	}
 </script>
 
 <svelte:head>
@@ -18,6 +27,7 @@
 			</li>
 		{/each}
 	</ul>
+	<Button on:click={handleResetRequest} {loading}>&#9760; Reset Lamp States &#9760;</Button>
 </OptionWrapper>
 
 <style>
