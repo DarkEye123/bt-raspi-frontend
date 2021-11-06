@@ -1,6 +1,6 @@
 import { dev } from '$app/env';
 
-function customFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+async function customFetch<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
 	let url = typeof input === 'string' ? input : (input as Request).url;
 	console.log('url', url);
 	if (dev) {
@@ -10,7 +10,13 @@ function customFetch(input: RequestInfo, init?: RequestInit): Promise<Response> 
 			url = `http://${host}:${port}${url}`;
 		}
 	}
-	return fetch(url, init);
+	const data = await fetch(url, init);
+	if (!data.ok) {
+		throw new Error(data.statusText);
+	}
+	if (data.headers.get('Content-Type').includes('application/json')) {
+		return data.json();
+	}
 }
 
 export default customFetch;

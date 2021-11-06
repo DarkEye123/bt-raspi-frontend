@@ -14,35 +14,40 @@
 	import ErrorComponent from '$lib/Error.svelte';
 	import Switch from '$lib/Switch.svelte';
 	import customFetch from '$lib/customFetch';
+	import LoadingSpinner from '$lib/LoadingSpinner.svelte';
 
 	const isBigScreen = browser && window.matchMedia('(min-width: 500px)');
 	const switchSize = isBigScreen.matches ? 'medium' : 'small';
 
 	let lampData: Lamp = null;
 
-	function toggleLight() {
-		customFetch(`/api/lamp/${$page.params.lamp}/toggle-light`);
+	let loadingMap: Lamp = { state: false, sensor_blocker: false, motion: false, sound: false };
+
+	async function toggleLight(id) {
+		loadingMap.state = true;
+		await customFetch(`/api/lamp/${$page.params.lamp}/toggle-light`);
 		lampData.state = !lampData.state;
+		loadingMap.state = false;
 	}
 
-	function toggleAllSensors(currentValue) {
-		customFetch(
+	async function toggleAllSensors(currentValue) {
+		loadingMap.sensor_blocker = true;
+		await customFetch(
 			`/api/lamp/${$page.params.lamp}/${currentValue ? 'disable' : 'enable'}-all-sensors`
 		);
+		loadingMap.sensor_blocker = false;
 	}
 
-	function toggleSensor(sensorName, currentValue) {
-		customFetch(
+	async function toggleSensor(sensorName, currentValue) {
+		loadingMap[sensorName] = true;
+		await customFetch(
 			`/api/lamp/${$page.params.lamp}/${currentValue ? 'disable' : 'enable'}-${sensorName}-sensor`
 		);
+		loadingMap[sensorName] = false;
 	}
 
 	async function synchronize() {
-		let data = await customFetch(`/api/lamp/${$page.params.lamp}/synchronize`);
-		if (!data.ok) {
-			throw new Error(data.statusText);
-		}
-		lampData = await data.json();
+		lampData = await customFetch<Lamp>(`/api/lamp/${$page.params.lamp}/synchronize`);
 	}
 </script>
 
@@ -59,7 +64,14 @@
 				Lamp Light:
 				<span class="value" class:value__positive={lampData.state}>&nbsp;{lampData.state}</span>
 			</span>
-			<button on:click={toggleLight}>➔ Toggle Light</button>
+			<div style="position: relative;">
+				<button on:click={toggleLight} style="visibility: {loadingMap.state && 'hidden' || "visible"};"
+				>➔ Toggle Light</button
+				>
+				<!-- {#if loadingMap.state} -->
+					<LoadingSpinner />
+				<!-- {/if} -->
+			</div>
 			<hr />
 			<hr />
 
