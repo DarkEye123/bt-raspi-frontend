@@ -14,7 +14,7 @@
 	import ErrorComponent from '$lib/Error.svelte';
 	import Switch from '$lib/Switch.svelte';
 	import customFetch from '$lib/customFetch';
-	import LoadingSpinner from '$lib/LoadingSpinner.svelte';
+	import Button from '$lib/Button.svelte';
 
 	const isBigScreen = browser && window.matchMedia('(min-width: 500px)');
 	const switchSize = isBigScreen.matches ? 'medium' : 'small';
@@ -65,12 +65,7 @@
 				<span class="value" class:value__positive={lampData.state}>&nbsp;{lampData.state}</span>
 			</span>
 			<div style="position: relative;">
-				<button on:click={toggleLight} style="visibility: {loadingMap.state && 'hidden' || "visible"};"
-				>➔ Toggle Light</button
-				>
-				<!-- {#if loadingMap.state} -->
-					<LoadingSpinner />
-				<!-- {/if} -->
+				<Button on:click={toggleLight} loading={loadingMap.state}>➔ Toggle Light</Button>
 			</div>
 			<hr />
 			<hr />
@@ -88,6 +83,7 @@
 					}}
 					bind:checked={lampData.sensor_blocker}
 					size={switchSize}
+					loading={loadingMap.sensor_blocker}
 				/>
 			</div>
 
@@ -103,6 +99,7 @@
 					bind:checked={lampData.motion}
 					disabled={lampData.sensor_blocker}
 					size={switchSize}
+					loading={loadingMap.motion}
 				/>
 			</div>
 
@@ -118,6 +115,7 @@
 					bind:checked={lampData.sound}
 					disabled={lampData.sensor_blocker}
 					size={switchSize}
+					loading={loadingMap.sound}
 				/>
 			</div>
 		</div>
