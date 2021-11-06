@@ -61,7 +61,6 @@
 		transition: all;
 		cursor: pointer;
 	}
-	:global(.wrapper button),
 	:global(.wrapper a) {
 		display: block;
 		letter-spacing: 0.3ch;
@@ -72,14 +71,6 @@
 		border: none;
 		background: white;
 		text-decoration: none;
-	}
-	:global(.wrapper button:hover) {
-		color: #333333;
-		background: lightgrey;
-	}
-	:global(.wrapper button:active) {
-		color: white;
-		background: black;
 	}
 	@media screen and (min-width: 500px) {
 		.wrapper {
