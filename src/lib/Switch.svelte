@@ -1,6 +1,9 @@
 <script lang="ts">
+	import LoadingSpinner from './LoadingSpinner.svelte';
+
 	export let checked = false;
 	export let disabled = false;
+	export let loading = false;
 	const sizes = {
 		small: {
 			switch: {
@@ -30,22 +33,28 @@
 	export let size: 'small' | 'medium' = 'small';
 </script>
 
-<label
-	class="switch"
-	style="--switch-width: {sizes[size].switch.width}; --switch-height: {sizes[size].switch
-		.height}; --slider-width: {sizes[size].slider.width}; --slider-height: {sizes[size].slider
-		.height}; --translate: {sizes[size].translate}; --bottom: {sizes[size].bottom};"
-	class:disabled
->
-	<input type="checkbox" on:change bind:checked {disabled} />
-	<span class="slider round" />
-</label>
+<div style="display: flex;">
+	<label
+		class="switch"
+		style="--switch-width: {sizes[size].switch.width}; --switch-height: {sizes[size].switch
+			.height}; --slider-width: {sizes[size].slider.width}; --slider-height: {sizes[size].slider
+			.height}; --translate: {sizes[size].translate}; --bottom: {sizes[size].bottom};"
+		class:disabled
+	>
+		<input type="checkbox" on:change bind:checked {disabled} />
+		<span class="slider round" />
+	</label>
+	{#if loading}
+		<LoadingSpinner align="right" size="small" />
+	{/if}
+</div>
 
 <style>
 	.disabled .slider {
 		cursor: default;
 	}
 	.switch {
+		flex-direction: row;
 		position: relative;
 		display: inline-block;
 		width: var(--switch-width);
